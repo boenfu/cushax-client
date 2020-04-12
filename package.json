@@ -1,0 +1,36 @@
+{
+  "name": "cushax-client",
+  "version": "0.1.0",
+  "author": "boenfu <1997@boenfu.cn>",
+  "license": "MIT",
+  "private": false,
+  "main": "lib/main.js",
+  "module": "lib/main.js",
+  "types": "lib/main.d.ts",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development && tsc --watch",
+    "build": "tsc"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boenfu/cushax-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/boenfu/cushax-client/issues"
+  },
+  "homepage": "https://github.com/boenfu/cushax-client#readme",
+  "devDependencies": {
+    "@types/socket.io-client": "^1.4.32",
+    "cross-env": "^7.0.2",
+    "typescript": "^3.8.3",
+    "vue": "^2.6.11",
+    "vue-router": "^3.1.6",
+    "vuex": "^3.1.3"
+  },
+  "dependencies": {
+    "socket.io-client": "^2.3.0"
+  }
+}
