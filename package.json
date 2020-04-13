@@ -8,6 +8,7 @@
   "module": "lib/main.js",
   "types": "lib/main.d.ts",
   "scripts": {
+    "prepublish": "yarn build",
     "dev": "cross-env NODE_ENV=development && tsc --watch",
     "build": "tsc"
   },
