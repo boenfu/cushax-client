@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <h2>我是 {{user}}</h2>
+
     <img src="./assets/logo.png" @click="toggle" />
     <router-view></router-view>
   </div>
@@ -12,13 +14,18 @@ import { Component, Vue } from "vue-property-decorator";
 export default class App extends Vue {
   foo = true;
 
+  get user(): any {
+
+    return this.$store.state.cushax?.user;
+  }
+
   toggle() {
-    this.$router.push(this.foo ? "bar" : "foo");
+    this.$router.push(this.foo ? "/bar" : "/foo/333");
     this.foo = !this.foo;
   }
 
   created() {
-    (this as any).$initCushax();
+    console.log((this as any).$page);
   }
 }
 </script>
