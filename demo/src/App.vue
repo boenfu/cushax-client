@@ -15,17 +15,12 @@ export default class App extends Vue {
   foo = true;
 
   get user(): any {
-
     return this.$store.state.cushax?.user;
   }
 
   toggle() {
     this.$router.push(this.foo ? "/bar" : "/foo/333");
     this.foo = !this.foo;
-  }
-
-  created() {
-    console.log((this as any).$page);
   }
 }
 </script>

@@ -80,6 +80,11 @@ cross-spawn@^7.0.1:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
+cushax-schema@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/cushax-schema/-/cushax-schema-0.1.0.tgz#e9410a156d582994c41f0ba68c78a525aca51fd3"
+  integrity sha512-htsoPAm36R6jFkeN3zlP5WckU5XqQP4QE8/UeugqbEd6lC4UEzdz00Wcvf9TozSxV3IM11LKM4df5BZhyOdssQ==
+
 debug@~3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"

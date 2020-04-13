@@ -9,8 +9,12 @@ import { Component, Vue } from "vue-property-decorator";
 
 @Component({})
 export default class App extends Vue {
-  get length(): number | undefined {
-    return this.$store.state.cushax?.bar?.length;
+  get length(): number {
+    return 1;
+  }
+
+  mounted() {
+    console.log((this as any).$page);
   }
 }
 </script>>
