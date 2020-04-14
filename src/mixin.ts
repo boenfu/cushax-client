@@ -27,6 +27,7 @@ export default function (
         for (let { instances } of route.matched) {
           for (let instance of Object.values(instances)) {
             instance.$page = page;
+            instance.$getPage = () => page as any;
           }
         }
       }
