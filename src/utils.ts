@@ -24,7 +24,11 @@ export function buildPage(
 }
 
 export function matchPage(route: Route): string | undefined {
-  return route.meta.cushax || route.name;
+  if (!route) {
+    return undefined;
+  }
+
+  return route.meta?.cushax || route.name;
 }
 
 export function existPage(
