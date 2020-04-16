@@ -67,7 +67,11 @@ export class Page<TModule extends Module<any, any>> {
   }) as PageUpdateType<TModule>;
 
   emit = ((event: string, data: any): void => {
-    if (!this.schema?.state["$event"]?.[event]) {
+    try {
+      if (!(event in this.schema?.state["$event"])) {
+        return;
+      }
+    } catch {
       return;
     }
 
