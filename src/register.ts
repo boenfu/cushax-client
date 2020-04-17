@@ -1,6 +1,11 @@
 import { Store, Module } from "vuex";
+import { CushaxOptions } from "./main";
 
-export function registerModule(store: Store<any>, schema: Module<any, any>) {
+export function registerModule(
+  store: Store<any>,
+  schema: Module<any, any>,
+  preserveState: CushaxOptions["preserveState"]
+) {
   let modules = schema.modules;
 
   for (let key in modules) {
@@ -23,8 +28,12 @@ export function registerModule(store: Store<any>, schema: Module<any, any>) {
     };
   }
 
-  store.registerModule("cushax", {
-    ...schema,
-    namespaced: true,
-  });
+  store.registerModule(
+    "cushax",
+    {
+      ...schema,
+      namespaced: true,
+    },
+    { preserveState }
+  );
 }
