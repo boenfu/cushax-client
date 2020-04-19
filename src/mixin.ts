@@ -28,8 +28,10 @@ export default function (
         ? new Page(pageName, schema, socket, $vue)
         : undefined;
 
-      $vue.$root.$cushax = cushax;
-      $vue.$root.$getCushax = () => cushax as any;
+      for (let component of $vue.$root.$children) {
+        component.$cushax = cushax;
+        component.$getCushax = () => cushax as any;
+      }
 
       for (let { instances } of route.matched) {
         for (let instance of Object.values(instances)) {
