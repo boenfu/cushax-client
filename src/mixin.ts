@@ -22,18 +22,22 @@ export default function (
       let route: Route = $vue.$route;
       let pageName = matchPage(route);
 
+      let cushax = new Cushax(socket, $vue, cushaxObject);
+
+      let page = existPage(schema, pageName)
+        ? new Page(pageName, schema, socket, $vue)
+        : undefined;
+
+      $vue.$root.$cushax = cushax;
+      $vue.$root.$getCushax = () => cushax as any;
+
       for (let { instances } of route.matched) {
         for (let instance of Object.values(instances)) {
-          let cushax = new Cushax(socket, $vue, cushaxObject);
-
           instance.$cushax = cushax;
           instance.$getCushax = () => cushax as any;
 
-          if (existPage(schema, pageName)) {
-            let page = new Page(pageName, schema, socket, $vue);
-            instance.$page = page;
-            instance.$getPage = () => page as any;
-          }
+          instance.$page = page!;
+          instance.$getPage = () => page as any;
         }
       }
     },
