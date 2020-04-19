@@ -17,6 +17,8 @@ type CushaxAuthType<TSchema extends Module<any, any>> = (
 ) => void;
 
 export class Cushax<TModule extends Module<any, any>> {
+  retryTimes = 0;
+
   get state(): TModule["state"] {
     return this.vue.$store.state.cushax;
   }
@@ -29,9 +31,16 @@ export class Cushax<TModule extends Module<any, any>> {
 
   auth = ((data: any): void => {
     if (!this.socket.connected) {
+      if (this.retryTimes === 5) {
+        this.retryTimes = 0;
+        return;
+      }
+
+      this.retryTimes++;
+
       setTimeout(() => {
         this.auth(data);
-      });
+      }, 100);
       return;
     }
 
