@@ -35,6 +35,10 @@ export default function (
 
       for (let { instances } of route?.matched ?? []) {
         for (let instance of Object.values(instances)) {
+          if (!instance) {
+            continue;
+          }
+
           instance.$cushax = cushax;
           instance.$getCushax = () => cushax as any;
 
