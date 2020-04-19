@@ -12,10 +12,9 @@ type CushaxCommitType<
     : never
 >;
 
-type CushaxAuthType<
-  TSchema extends Module<any, any>,
-  TAuth = Pick<TSchema["state"], "$auth">
-> = (data: Partial<TAuth>) => void;
+type CushaxAuthType<TSchema extends Module<any, any>> = (
+  data: Partial<TSchema["state"]["$auth"]>
+) => void;
 
 export class Cushax<TModule extends Module<any, any>> {
   get state(): TModule["state"] {
