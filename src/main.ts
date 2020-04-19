@@ -98,7 +98,7 @@ function overseeAuth(
   }
 
   vue.$watch("$route", (route: Route) => {
-    if (cushax.verified || route.path !== authPath) {
+    if (cushax.verified || route.path === authPath) {
       return;
     }
 
