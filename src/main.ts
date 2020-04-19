@@ -26,13 +26,13 @@ export interface CushaxOptions {
   /**
    *  https://vuex.vuejs.org/api/#registermodule
    */
-  preserveState: boolean;
+  preserveState?: boolean;
 }
 
 export default function (
   schema: Module<any, any>,
   socketOptions: SocketOptions = "http://localhost",
-  options: CushaxOptions
+  options?: CushaxOptions
 ): ICushax {
   let url =
     (typeof socketOptions === "object"
@@ -54,7 +54,7 @@ export default function (
         let store = $vue.$store;
         let router = $vue.$router;
         let socket = cushax.socket;
-        let { preserveState } = options;
+        let preserveState = options?.preserveState;
 
         registerModule(store, schema, preserveState);
 
