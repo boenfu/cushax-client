@@ -3,6 +3,7 @@ import { matchPage, existPage } from "./utils";
 import { Page } from "./page";
 import { Module } from "vuex";
 import { ICushax } from "./main";
+import { Cushax } from "./cushax";
 
 export default function (
   cushax: ICushax,
@@ -23,11 +24,15 @@ export default function (
 
       if (existPage(schema, pageName)) {
         let page = new Page(pageName, schema, socket, $vue);
+        let cushax = new Cushax(socket, $vue);
 
         for (let { instances } of route.matched) {
           for (let instance of Object.values(instances)) {
             instance.$page = page;
             instance.$getPage = () => page as any;
+
+            instance.$cushax = cushax;
+            instance.$getCushax = () => cushax as any;
           }
         }
       }

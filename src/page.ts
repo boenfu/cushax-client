@@ -1,17 +1,6 @@
 import { Module } from "vuex";
 import { buildPage } from "./utils";
-
-type ObjectPropertyToPair<
-  TObject,
-  TKey extends keyof TObject,
-  TPKey
-> = TPKey extends keyof TObject[TKey] ? [TPKey, TObject[TKey][TPKey]] : never;
-
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I
-) => void
-  ? I
-  : never;
+import { ObjectPropertyToPair, UnionToIntersection } from "./types";
 
 type PageCommitType<
   TSchema extends Module<any, any>,

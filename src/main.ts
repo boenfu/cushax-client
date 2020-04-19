@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 
 import { VueConstructor } from "vue";
-import VueRouter from "vue-router";
+import VueRouter, { Route } from "vue-router";
 import { Store, Module } from "vuex";
 
 import { Schema as _Schema } from "cushax-schema";
@@ -18,8 +18,10 @@ export type SocketOptions = string | { host: string; port: number };
 
 export interface ICushax {
   installed: boolean;
+  verified: boolean;
   install: (Vue: VueConstructor) => void;
   socket: SocketIOClient.Socket;
+  options?: CushaxOptions;
 }
 
 export interface CushaxOptions {
@@ -27,6 +29,7 @@ export interface CushaxOptions {
    *  https://vuex.vuejs.org/api/#registermodule
    */
   preserveState?: boolean;
+  authPath?: string;
 }
 
 export default function (
@@ -43,6 +46,7 @@ export default function (
 
   return {
     installed: false,
+    verified: false,
     install: function (Vue: VueConstructor) {
       let cushax = this;
 
@@ -58,6 +62,7 @@ export default function (
 
         registerModule(store, schema, preserveState);
 
+        overseeAuth($vue, cushax, schema, socket);
         overseeSocket(socket, store, schema);
         overseeRoute(router, store, socket);
       };
@@ -67,7 +72,38 @@ export default function (
       Vue.mixin(mixinBuilder(cushax, schema, socket));
     },
     socket,
+    options,
   };
+}
+
+function overseeAuth(
+  vue: Vue,
+  cushax: ICushax,
+  schema: Module<any, any>,
+  socket: SocketIOClient.Socket
+) {
+  if (typeof schema.state?.$auth === "undefined") {
+    cushax.verified = true;
+    return;
+  }
+
+  socket.on("auth", (verified: boolean) => {
+    cushax.verified = !!verified;
+  });
+
+  let authPath = cushax.options?.authPath;
+
+  if (!authPath) {
+    return;
+  }
+
+  vue.$watch("$route", (route: Route) => {
+    if (cushax.verified || route.path !== authPath) {
+      return;
+    }
+
+    vue.$router.replace({ path: authPath });
+  });
 }
 
 function overseeRoute(
