@@ -6,7 +6,7 @@ import { ICushax } from "./main";
 import { Cushax } from "./cushax";
 
 export default function (
-  cushax: ICushax,
+  cushaxObject: ICushax,
   schema: Module<any, any>,
   socket: SocketIOClient.Socket
 ) {
@@ -14,25 +14,25 @@ export default function (
     beforeMount(): void {
       let $vue = this as any;
 
-      if (!cushax.installed) {
+      if (!cushaxObject.installed) {
         $vue.$init_cushax();
-        cushax.installed = true;
+        cushaxObject.installed = true;
       }
 
       let route: Route = $vue.$route;
       let pageName = matchPage(route);
 
-      if (existPage(schema, pageName)) {
-        let page = new Page(pageName, schema, socket, $vue);
-        let cushax = new Cushax(socket, $vue);
+      for (let { instances } of route.matched) {
+        for (let instance of Object.values(instances)) {
+          let cushax = new Cushax(socket, $vue, cushaxObject);
 
-        for (let { instances } of route.matched) {
-          for (let instance of Object.values(instances)) {
+          instance.$cushax = cushax;
+          instance.$getCushax = () => cushax as any;
+
+          if (existPage(schema, pageName)) {
+            let page = new Page(pageName, schema, socket, $vue);
             instance.$page = page;
             instance.$getPage = () => page as any;
-
-            instance.$cushax = cushax;
-            instance.$getCushax = () => cushax as any;
           }
         }
       }

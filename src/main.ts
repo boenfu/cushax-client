@@ -1,8 +1,8 @@
 import io from "socket.io-client";
 
 import { VueConstructor } from "vue";
-import VueRouter, { Route } from "vue-router";
 import { Store, Module } from "vuex";
+import VueRouter from "vue-router";
 
 import { Schema as _Schema } from "cushax-schema";
 
@@ -29,7 +29,6 @@ export interface CushaxOptions {
    *  https://vuex.vuejs.org/api/#registermodule
    */
   preserveState?: boolean;
-  authPath?: string;
 }
 
 export default function (
@@ -62,7 +61,7 @@ export default function (
 
         registerModule(store, schema, preserveState);
 
-        overseeAuth($vue, cushax, schema, socket);
+        overseeAuth(socket, cushax, schema);
         overseeSocket(socket, store, schema);
         overseeRoute(router, store, socket);
       };
@@ -77,10 +76,9 @@ export default function (
 }
 
 function overseeAuth(
-  vue: Vue,
+  socket: SocketIOClient.Socket,
   cushax: ICushax,
-  schema: Module<any, any>,
-  socket: SocketIOClient.Socket
+  schema: Module<any, any>
 ) {
   if (typeof schema.state?.$auth === "undefined") {
     cushax.verified = true;
@@ -89,20 +87,6 @@ function overseeAuth(
 
   socket.on("auth", (verified: boolean) => {
     cushax.verified = !!verified;
-  });
-
-  let authPath = cushax.options?.authPath;
-
-  if (!authPath) {
-    return;
-  }
-
-  vue.$watch("$route", (route: Route) => {
-    if (cushax.verified || route.path === authPath) {
-      return;
-    }
-
-    vue.$router.replace({ path: authPath });
   });
 }
 

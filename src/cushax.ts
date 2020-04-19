@@ -1,5 +1,6 @@
 import { Module } from "vuex";
 import { ObjectPropertyToPair, UnionToIntersection } from "./types";
+import { ICushax } from "./main";
 
 type CushaxCommitType<
   TSchema extends Module<any, any>,
@@ -23,7 +24,15 @@ export class Cushax<TModule extends Module<any, any>> {
     return this.vue.$store.state.cushax;
   }
 
-  constructor(public socket: SocketIOClient.Socket, private vue: Vue) {}
+  get verified(): boolean {
+    return this.cushax.verified;
+  }
+
+  constructor(
+    public socket: SocketIOClient.Socket,
+    private vue: Vue,
+    private cushax: ICushax
+  ) {}
 
   commit = ((name: string, payload: any): void => {
     this.vue.$store.commit(`cushax/${name}`, payload);
