@@ -21,7 +21,7 @@ export class Cushax<TModule extends Module<any, any>> {
     return this.vue.$store.state.cushax;
   }
 
-  constructor(private socket: SocketIOClient.Socket, private vue: Vue) {}
+  constructor(public socket: SocketIOClient.Socket, private vue: Vue) {}
 
   commit = ((name: string, payload: any): void => {
     this.vue.$store.commit(`cushax/${name}`, payload);
