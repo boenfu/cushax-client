@@ -28,6 +28,13 @@ export class Cushax<TModule extends Module<any, any>> {
   }) as CushaxCommitType<TModule>;
 
   auth = ((data: any): void => {
+    if (!this.socket.connected) {
+      setTimeout(() => {
+        this.auth(data);
+      });
+      return;
+    }
+
     this.socket.emit("auth", data);
   }) as CushaxAuthType<TModule>;
 }
