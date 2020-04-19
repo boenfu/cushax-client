@@ -33,7 +33,7 @@ export default function (
         component.$getCushax = () => cushax as any;
       }
 
-      for (let { instances } of route.matched) {
+      for (let { instances } of route?.matched ?? []) {
         for (let instance of Object.values(instances)) {
           instance.$cushax = cushax;
           instance.$getCushax = () => cushax as any;
