@@ -7,7 +7,7 @@ import { Cushax } from "./cushax";
 declare module "vue/types/vue" {
   interface Vue {
     $cushax: Cushax<any>;
-    $getCushax: <TSchema extends Module<any, any>>() => Page<TSchema>;
+    $getCushax: <TSchema extends Module<any, any>>() => Cushax<TSchema>;
     $page: Page<any>;
     $getPage: <
       TSchema extends Module<any, any>,
