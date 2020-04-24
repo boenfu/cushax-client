@@ -28,7 +28,7 @@ export default function (
 
       for (let { instances } of route?.matched ?? []) {
         for (let instance of Object.values(instances)) {
-          if (!instance || !(instance as any)._uid === $vue._uid) {
+          if (!instance || !((instance as any)._uid === $vue._uid)) {
             continue;
           }
 
