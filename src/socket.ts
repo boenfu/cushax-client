@@ -51,10 +51,12 @@ export function wrapSocket(socket: SocketIOClient.Socket): void {
   };
 
   function sendPendingEmits(): void {
-    while (pendingEmits.length) {
-      socket.emit(...pendingEmits.shift()!);
-    }
-
     verified = true;
+
+    let emits = [...pendingEmits];
+
+    while (emits.length) {
+      socket.emit(...emits.shift()!);
+    }
   }
 }
