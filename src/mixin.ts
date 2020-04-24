@@ -36,10 +36,8 @@ export default function (
           if (!cushaxObject.mounted) {
             cushaxObject.mounted = true;
 
-            setTimeout(() => {
-              socket.emit("page:sync", {
-                enter: buildPage(route, instance.$store),
-              });
+            socket.emit("page:sync", {
+              enter: buildPage(route, instance.$store),
             });
           }
 

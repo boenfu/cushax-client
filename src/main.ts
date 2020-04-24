@@ -11,6 +11,7 @@ import mixinBuilder from "./mixin";
 import { registerModule } from "./register";
 
 import "./types";
+import { wrapSocket } from "./socket";
 
 export const Schema = _Schema;
 
@@ -43,6 +44,8 @@ export default function (
       : socketOptions) + "/cushax";
 
   let socket = io(url);
+
+  wrapSocket(socket);
 
   return {
     installed: false,
