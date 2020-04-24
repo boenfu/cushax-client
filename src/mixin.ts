@@ -1,5 +1,5 @@
 import { Route } from "vue-router";
-import { matchPage, existPage } from "./utils";
+import { matchPage, existPage, buildPage } from "./utils";
 import { Page } from "./page";
 import { Module } from "vuex";
 import { ICushax } from "./main";
@@ -20,27 +20,34 @@ export default function (
       }
 
       let route: Route = $vue.$route;
-      let pageName = matchPage(route);
 
       let cushax = new Cushax(socket, $vue, cushaxObject);
 
-      let page = existPage(schema, pageName)
-        ? new Page(pageName, schema, socket, $vue)
-        : undefined;
-
-      for (let component of $vue.$root.$children) {
-        component.$cushax = cushax;
-        component.$getCushax = () => cushax as any;
-      }
+      $vue.$cushax = cushax;
+      $vue.$getCushax = () => cushax as any;
 
       for (let { instances } of route?.matched ?? []) {
         for (let instance of Object.values(instances)) {
-          if (!instance) {
+          if (!instance || !(instance as any)._uid === $vue._uid) {
             continue;
           }
 
-          instance.$cushax = cushax;
-          instance.$getCushax = () => cushax as any;
+          // hack first loaded page
+          if (!cushaxObject.mounted) {
+            cushaxObject.mounted = true;
+
+            setTimeout(() => {
+              socket.emit("page:sync", {
+                enter: buildPage(route, instance.$store),
+              });
+            });
+          }
+
+          let pageName = matchPage(route);
+
+          let page = existPage(schema, pageName)
+            ? new Page(pageName, schema, socket, $vue)
+            : undefined;
 
           instance.$page = page!;
           instance.$getPage = () => page as any;

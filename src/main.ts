@@ -18,6 +18,7 @@ export type SocketOptions = string | { host: string; port: number };
 
 export interface ICushax {
   installed: boolean;
+  mounted: boolean;
   verified: boolean;
   install: (Vue: VueConstructor) => void;
   socket: SocketIOClient.Socket;
@@ -72,6 +73,7 @@ export default function (
     },
     socket,
     options,
+    mounted: false,
   };
 }
 
