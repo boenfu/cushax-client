@@ -24,6 +24,7 @@ export interface ICushax {
   install: (Vue: VueConstructor) => void;
   socket: SocketIOClient.Socket;
   options?: CushaxOptions;
+  pageInstanceDict: { [key in string]: Vue | undefined };
 }
 
 export interface CushaxOptions {
@@ -66,7 +67,7 @@ export default function (
         registerModule(store, schema, preserveState);
 
         overseeAuth(socket, cushax, schema);
-        overseeSocket(socket, store, schema);
+        overseeSocket(socket, cushax, store, schema);
         overseeRoute(router, store, socket);
       };
 
@@ -77,6 +78,7 @@ export default function (
     socket,
     options,
     mounted: false,
+    pageInstanceDict: {},
   };
 }
 
@@ -112,6 +114,7 @@ function overseeRoute(
 
 function overseeSocket(
   socket: SocketIOClient.Socket,
+  cushax: ICushax,
   store: Store<any>,
   schema: Module<any, any>
 ): void {
@@ -123,6 +126,11 @@ function overseeSocket(
   // root commit
   socket.on("commit", function (name: string, payload: any) {
     store.commit(`cushax/${name}`, payload);
+  });
+
+  // page hook
+  socket.on("page:entered", function (name: string) {
+    cushax.pageInstanceDict[name]?.$pageEntered?.();
   });
 
   // reset

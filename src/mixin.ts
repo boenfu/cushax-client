@@ -49,6 +49,8 @@ export default function (
 
           instance.$page = page!;
           instance.$getPage = () => page as any;
+
+          cushaxObject.pageInstanceDict[pageName!] = instance;
         }
       }
     },
