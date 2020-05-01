@@ -18,7 +18,8 @@ declare module "vue/types/vue" {
     >() => Page<TSchema["modules"][TKey]>;
 
     // hook
-    $pageEntered?: () => void;
+    $pageEntered?(): void;
+    $pageUpdated?(): void;
   }
 }
 

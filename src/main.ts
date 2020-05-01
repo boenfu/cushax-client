@@ -133,6 +133,10 @@ function overseeSocket(
     cushax.pageInstanceDict[name]?.$pageEntered?.();
   });
 
+  socket.on("page:updated", function (name: string) {
+    cushax.pageInstanceDict[name]?.$pageUpdated?.();
+  });
+
   // reset
   socket.on("*", function (pages: string[]) {
     for (let page of pages) {
