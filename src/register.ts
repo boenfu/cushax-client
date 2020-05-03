@@ -1,5 +1,6 @@
 import { Store, Module } from "vuex";
 import { CushaxOptions } from "./main";
+import clone from "clone";
 
 export function registerModule(
   store: Store<any>,
@@ -7,7 +8,7 @@ export function registerModule(
   preserveState: CushaxOptions["preserveState"]
 ) {
   // copy schema
-  schema = JSON.parse(JSON.stringify(schema));
+  schema = clone(schema);
 
   let modules = schema.modules;
 
