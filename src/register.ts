@@ -6,6 +6,9 @@ export function registerModule(
   schema: Module<any, any>,
   preserveState: CushaxOptions["preserveState"]
 ) {
+  // copy schema
+  schema = JSON.parse(JSON.stringify(schema));
+
   let modules = schema.modules;
 
   for (let key in modules) {
