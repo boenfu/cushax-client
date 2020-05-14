@@ -17,12 +17,26 @@ export const Schema = _Schema;
 
 export type SocketOptions = string | { host: string; port: number };
 
+export interface PageInstanceDict {
+  [key: string]: Vue | undefined;
+}
+
+type PageInstanceDictProxy = PageInstanceDict & {
+  _entered: {
+    [key: string]: any;
+  };
+  _updated: {
+    [key: string]: any;
+  };
+};
+
 export interface ICushax {
   installed: boolean;
   mounted: boolean;
   verified: boolean;
   install: (Vue: VueConstructor) => void;
   socket: SocketIOClient.Socket;
+  pageInstanceDict: PageInstanceDict;
   options?: CushaxOptions;
 }
 
@@ -66,7 +80,7 @@ export default function (
         registerModule(store, schema, preserveState);
 
         overseeAuth(socket, cushax, schema);
-        overseeSocket(socket, store, schema);
+        overseeSocket(socket, cushax, store, schema);
         overseeRoute(router, store, socket);
       };
 
@@ -77,6 +91,7 @@ export default function (
     socket,
     options,
     mounted: false,
+    pageInstanceDict: getPageInstanceDict(),
   };
 }
 
@@ -112,6 +127,7 @@ function overseeRoute(
 
 function overseeSocket(
   socket: SocketIOClient.Socket,
+  cushax: ICushax,
   store: Store<any>,
   schema: Module<any, any>
 ): void {
@@ -123,6 +139,15 @@ function overseeSocket(
   // root commit
   socket.on("commit", function (name: string, payload: any) {
     store.commit(`cushax/${name}`, payload);
+  });
+
+  // page hook
+  socket.on("page:entered", function (name: string) {
+    cushax.pageInstanceDict[name]?.$pageEntered?.();
+  });
+
+  socket.on("page:updated", function (name: string) {
+    cushax.pageInstanceDict[name]?.$pageUpdated?.();
   });
 
   // reset
@@ -137,4 +162,58 @@ function overseeSocket(
       store.commit(`cushax/${page}/$reset`, module.state);
     }
   });
+}
+
+function getPageInstanceDict(): PageInstanceDictProxy {
+  let proxy = new Proxy<PageInstanceDict>(
+    {},
+    {
+      get(
+        dict: PageInstanceDict,
+        key: string,
+        receiver: PageInstanceDictProxy
+      ): Partial<Vue> {
+        let instance = dict[key];
+
+        if (instance) {
+          return instance;
+        }
+
+        // proxy hook when instance not ready
+        return {
+          $pageEntered() {
+            receiver["_entered"][key] = true;
+          },
+          $pageUpdated() {
+            receiver["_updated"][key] = true;
+          },
+        };
+      },
+      set(
+        dict: PageInstanceDict,
+        key: string,
+        instance: Vue,
+        receiver: PageInstanceDictProxy
+      ) {
+        dict[key] = instance;
+
+        if (receiver["_entered"][key]) {
+          delete receiver["_entered"][key];
+          instance?.$pageEntered?.();
+        }
+
+        if (receiver["_updated"][key]) {
+          delete receiver["_updated"][key];
+          instance?.$pageUpdated?.();
+        }
+
+        return true;
+      },
+    }
+  ) as PageInstanceDictProxy;
+
+  proxy._entered = {};
+  proxy._updated = {};
+
+  return proxy;
 }

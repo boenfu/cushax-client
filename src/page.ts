@@ -13,6 +13,13 @@ type PageCommitType<
     : never
 >;
 
+type PageForceEnterType<
+  TSchema extends Module<any, any>,
+  TD = Pick<TSchema["state"], "$params">
+> = UnionToIntersection<TD> extends { $params: infer P }
+  ? (params?: Partial<P>) => void
+  : never;
+
 type PageUpdateType<
   TSchema extends Module<any, any>,
   TD = Pick<TSchema["state"], "$params">
@@ -46,6 +53,15 @@ export class Page<TModule extends Module<any, any>> {
   commit = ((name: string, payload: any): void => {
     this.vue.$store.commit(`cushax/${this.name}/${name}`, payload);
   }) as PageCommitType<TModule>;
+
+  forceEnter = ((params: any = {}): void => {
+    this.reset();
+    this.vue.$store.commit(`cushax/${this.name}/$update`, params);
+
+    this.socket.emit("page:sync", {
+      enter: buildPage(this.vue.$route, this.vue.$store),
+    });
+  }) as PageForceEnterType<TModule>;
 
   update = ((params: any): void => {
     this.vue.$store.commit(`cushax/${this.name}/$update`, params);
