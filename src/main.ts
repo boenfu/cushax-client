@@ -15,7 +15,9 @@ import { wrapSocket } from "./socket";
 
 export const Schema = _Schema;
 
-export type SocketOptions = string | { host: string; port: number };
+export type SocketOptions =
+  | string
+  | (SocketIOClient.ConnectOpts & { host: string });
 
 export interface PageInstanceDict {
   [key: string]: Vue | undefined;
@@ -49,15 +51,22 @@ export interface CushaxOptions {
 
 export default function (
   schema: Module<any, any>,
-  socketOptions: SocketOptions = "http://localhost",
+  socketOptions: SocketOptions,
   options?: CushaxOptions
 ): ICushax {
-  let url =
-    (typeof socketOptions === "object"
-      ? `${socketOptions.host}:${socketOptions.port}`
-      : socketOptions) + "/cushax";
+  let url!: string;
+  let socketIOClientOptions: SocketIOClient.ConnectOpts | undefined;
 
-  let socket = io(url);
+  if (typeof socketOptions === "object") {
+    let { host, ...options } = socketOptions;
+
+    url = host;
+    socketIOClientOptions = options;
+  } else {
+    url = socketOptions;
+  }
+
+  let socket = io(url + "/cushax", socketIOClientOptions);
 
   wrapSocket(socket);
 
